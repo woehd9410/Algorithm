@@ -1,48 +1,53 @@
-#include <stdio.h>
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <iostream>
 using namespace std;
 
-extern void init(void);
+#define endl '\n'
 
-extern void insert(int buffer_size, char* buf);
+int T;
+int map[12][12];
+bool visit[12];
+int ans;
 
-extern int query(int buffer_size, char* buf);
+void init() {
+	memset(visit, false, sizeof(visit));
+	ans = 0;
+}
 
-int main(void) {
-	freopen("input.txt", "r", stdin);
-	int TestCase;
-	for (scanf("%d", &TestCase); TestCase--;) {
-		int Query_N;
-		scanf("%d", &Query_N);
-
-		init();
-
-		static int tc = 0;
-		printf("#%d", ++tc);
-
-		for (int i = 1; i <= Query_N; i++) {
-			int type; scanf("%d", &type);
-
-			if (type == 1) {
-				char buf[15] = { 0, };
-				scanf("%s", buf);
-
-				int buffer_size = 0;
-				while (buf[buffer_size]) buffer_size++;
-
-				insert(buffer_size, buf);
-			}
-			else {
-				char buf[15] = { 0, };
-				scanf("%s", buf);
-
-				int buffer_size = 0;
-				while (buf[buffer_size]) buffer_size++;
-
-				printf(" %d", query(buffer_size, buf));
-			}
+void input() {
+	for (int i = 1; i <= 11; i++) {
+		for (int j = 1; j <= 11; j++) {
+			cin >> map[i][j];
 		}
-		printf("\n");
-		fflush(stdout);
+	}
+}
+
+void DFS(int next, int sum) {
+	if (next == 12) {
+		if (ans < sum) ans = sum;
+		return;
+	}
+	for (int i = 1; i <= 11; i++) {
+		if (map[next][i] == 0 || visit[i]) continue;
+		visit[i] = true;
+		DFS(next + 1, sum + map[next][i]);
+		visit[i] = false;
+	}
+}
+
+void solve() {
+	DFS(1, 0);
+}
+
+int main() {
+	freopen("input.txt", "r", stdin);
+	cin >> T;
+	for (int i = 0; i < T; i++) {
+		init();
+		input();
+
+		solve();
+		cout << ans << endl;
 	}
 }
